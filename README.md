@@ -16,22 +16,17 @@ You'll need Postgres if you don't already have it
 brew install postgres
 ```
 
-There is a dumpfile in the `/database` folder which should contain all you need to start messing around with the data. 
-
-Create a database called `fat_bear_week` and restore the dump.
+Create a database called `fat_bear_week` and run the following:
 ```commandline
-createdb fat_bear_week
-pg_restore -d fat_bear_week -C database.dump
+python manage.py migrate
+python manage.py import_bears
 ```
-_I'm just noodling around at the moment so I'll come back to users and ownership later_
 
-If there are any DB schema changes, the models will need to be regenerated using 
+If any changes are made to the models, a migration will need to be created:
 ```commandline
-python manage.py inspectdb > fat_bear_week_api/models.py
+python manage.py makemigrations
+python manage.py migrate -- this step will run the new migrations against the db
 ```
-At the moment this change is breaking, because it removes the `related_name` property of some foreign keys - this is an 
-issue when one table is linked multiple times as we see in `results` and `brackets`. It also pluralises the models. 
-This needs a little manual intervention to fix.
 
 ## Run
 Make sure you've got a venv up with the requirements installed.
@@ -49,32 +44,21 @@ python manage.py runserver
 Current endpoints:
 - `/api/bears GET` - all info held about every bear on our books
 - `/api/champions GET` - all bears that have won a final round, date of final and basic bear ID
+- `/api/finalists GET` - all bears that have competed in a final round, date of final and basic bear ID
 
 Proposed endpoints:
 #### GET
-- `/bears/{uuid}`, `/bears/{bear_number}` 
+- `/bears/{uuid}`
   - all the ID information held about a specific bear
 - `/matchups/{year}`
   - a simple bear vs. bear list of matchups and dates for the given year
-- `/finalists` 
-  - all bears who have made it to the final round with no. instances
 - `/rivals` 
   - every bear and their no. 1 rival (the bear that has beat them in a 1-1 the most times)
-- `/info/{year}`
+- `/overview/{year: optional}`
   - admin stuff, e.g. no. rounds, participants, start-end dates, winner, no. votes cast
 
 #### POST (stretch goal as these will need to be locked down)
 - `/results/{bracket_uuid}`
   - write a result record for a given bracket uuid. 
 - `/bears`
-  - create/update a bear 
-
-
-## TODO:
-- ~~Decide on a framework~~
-  - Fast API (shiny new thing)
-  - Flask (I know what I'm doing)
-  - Django (would be a useful learning experience)
-- Actually learn some DevOps so I know how this ends
-- ~~Outline some useful endpoints~~
-
+  - create/update a bear

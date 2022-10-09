@@ -59,9 +59,14 @@ class Result(models.Model):
 
 class Round(models.Model):
     round_uuid = models.UUIDField(blank=True, null=True)
-    competition_year = models.IntegerField()
+    year = models.ForeignKey("Year", models.DO_NOTHING, blank=True, null=True)
     round_number = models.IntegerField(blank=True, null=True)
     final_round = models.BooleanField()
 
     class Meta:
-        unique_together = (("competition_year", "round_number"),)
+        unique_together = (("year", "round_number"),)
+
+
+class Year(models.Model):
+    year_uuid = models.UUIDField(blank=True, null=True)
+    competition_year = models.IntegerField()
