@@ -25,7 +25,7 @@ class BracketContestantQuerySet(models.QuerySet):
 
 class BracketContestant(models.Model):
     bracket_contestant_uuid = models.UUIDField(blank=True, null=True)
-    bracket = models.ForeignKey("Bracket", models.DO_NOTHING, blank=True, null=True)
+    bracket = models.ForeignKey("Bracket", models.DO_NOTHING, blank=True, null=True, related_name="bracket_bc")
     bear = models.ForeignKey(Bear, models.DO_NOTHING, blank=True, null=True)
 
     objects = BracketContestantQuerySet.as_manager()
@@ -36,7 +36,7 @@ class BracketContestant(models.Model):
 
 class Bracket(models.Model):
     bracket_uuid = models.UUIDField()
-    round = models.ForeignKey("Round", models.DO_NOTHING, blank=True, null=True)
+    round = models.ForeignKey("Round", models.DO_NOTHING, blank=True, null=True, related_name="round_brackets")
     bracket_date = models.DateField()
 
 
@@ -59,7 +59,7 @@ class Result(models.Model):
 
 class Round(models.Model):
     round_uuid = models.UUIDField(blank=True, null=True)
-    year = models.ForeignKey("Year", models.DO_NOTHING, blank=True, null=True)
+    year = models.ForeignKey("Year", models.DO_NOTHING, blank=True, null=True, related_name="year_rounds")
     round_number = models.IntegerField(blank=True, null=True)
     final_round = models.BooleanField()
 
