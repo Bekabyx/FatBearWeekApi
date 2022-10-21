@@ -3,13 +3,14 @@ import csv
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from bears.models import Bear, Bracket, Round, BracketContestant, Result
+from bears.models import Bear, Year, Bracket, Round, BracketContestant, Result
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.data_path = settings.BASE_DIR.parent / "database"
         self.import_bears()
+        self.import_years()
         self.import_rounds()
         self.import_brackets()
         self.import_bracket_contestant()
@@ -24,6 +25,11 @@ class Command(BaseCommand):
             line["bear_number"] = bear_number
             line["first_identified"] = line["first_identified"] or None
             Bear.objects.update_or_create(pk=line.pop("id"), defaults=line)
+
+    def import_years(self):
+        years_csv = self.data_path / "years.csv"
+        for line in csv.DictReader(years_csv.open()):
+            Year.objects.update_or_create(pk=line.pop("id"), defaults=line)
 
     def import_rounds(self):
         rounds_csv = self.data_path / "rounds.csv"
