@@ -32,10 +32,10 @@ class BracketContestantBearSerializer(serializers.Serializer):
         model = BracketContestant
         fields = ["bear_uuid", "bear_name", "bear_number"]
 
+
 class BracketSerializer(serializers.HyperlinkedModelSerializer):
     bracket_date = serializers.StringRelatedField()
     contestants = BracketContestantBearSerializer(many=True, source="bracket_bc")
-    # contestants = BasicBearSerializer(many=True, source="bracket_bc.bear")
 
     class Meta:
         model = Bracket
@@ -44,12 +44,15 @@ class BracketSerializer(serializers.HyperlinkedModelSerializer):
 
 class RoundSerializer(serializers.HyperlinkedModelSerializer):
     brackets = BracketSerializer(source="round_brackets", many=True)
+
     class Meta:
         model = Round
         fields = ["round_number", "brackets"]
 
+
 class OverviewSerializer(serializers.HyperlinkedModelSerializer):
     rounds = RoundSerializer(source="year_rounds", many=True)
+
     class Meta:
         model = Year
         fields = ["competition_year", "rounds"]
